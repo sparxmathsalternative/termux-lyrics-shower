@@ -1,4 +1,4 @@
-# # 🎵 Termux Lyrics Shower
+# 🎵 Termux Lyrics Shower
 
 Real-time synced lyrics display with music playback for Termux. Download songs, fetch synced lyrics, and watch them scroll as the music plays!
 
@@ -12,21 +12,47 @@ Real-time synced lyrics display with music playback for Termux. Download songs, 
 - ⚙️ **Configurable** media players and platforms
 - 🔎 **Fuzzy search** for cached files
 - 📦 **Auto-install** dependencies
+- 🖥️ **Interactive mode** for easier use
+- 🔄 **Auto-update** checking and installation
+- 🔔 **Version warnings** for outdated or dev versions
 
 ## 📥 Installation
 
 ```bash
 pkg update
-pkg install git
-pkg install python3
+pkg install git python3
 git clone https://github.com/sparxmathsalternative/termux-lyrics-shower.git
 cd termux-lyrics-shower
 chmod +x install.sh
 bash install.sh
 ```
 
+After installation, restart your terminal or run:
+```bash
+source ~/.bashrc
+```
 
 ## 🚀 Usage
+
+### Interactive Mode
+
+Just type `lyrics` with no arguments to enter interactive mode:
+
+```bash
+lyrics
+```
+
+In interactive mode:
+```
+lyrics> set overnight - mirrors demo    # Set session song
+lyrics> play                             # Play the session song
+lyrics> lyrics                           # Get lyrics for session song
+lyrics> download shape of you            # Download a different song
+lyrics> list                             # List cached files
+lyrics> settings                         # Open settings
+lyrics> help                             # Show help
+lyrics> exit                             # Exit
+```
 
 ### Basic Commands
 
@@ -78,6 +104,21 @@ lyrics --menu
 # - Display mode (scrolling, centered, list)
 # - Visual effects (glitch, flash)
 # - Auto-install dependencies
+# - Check for updates
+```
+
+### Update & Maintenance
+
+```bash
+# Check version
+lyrics -v
+lyrics --version
+
+# Update to latest version
+lyrics --update
+
+# Uninstall (keeps cached data)
+lyrics --uninstall
 ```
 
 ### Advanced Options
@@ -91,6 +132,37 @@ lyrics --music-url "https://cdn.com/audio.mp3" --lyrics-url "https://cdn.com/lyr
 lyrics -h
 lyrics --help
 ```
+
+## 🔔 Version Warnings
+
+The app automatically checks for updates and shows warnings:
+
+**Outdated Version:**
+```
+╔══════════════════════════════════════════════════════════════╗
+║  ⚠️  WARNING: OUTDATED VERSION                               ║
+╟──────────────────────────────────────────────────────────────╢
+║  Current Version: 1.0.0-alpha   (from 2026-01-30)            ║
+║  Latest Version:  1.0.1-alpha   (from 2026-02-01)            ║
+║                                                              ║
+║  Please update using: lyrics --update                        ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+**Developer/Unreleased Version:**
+```
+╔══════════════════════════════════════════════════════════════╗
+║  ⚠️  WARNING: UNRELEASED/DEVELOPER VERSION                   ║
+╟──────────────────────────────────────────────────────────────╢
+║  You are using version 1.1.0-dev which is ahead of           ║
+║  the official release (1.0.0-alpha).                         ║
+║                                                              ║
+║  This version may contain severe bugs and untested features. ║
+║  The developers are not responsible for any outcomes.        ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+To disable version checking: `lyrics --settings` → Option 8
 
 ## 🎨 Display Modes
 
@@ -127,13 +199,15 @@ Enable in settings: `lyrics --settings` → Option 5/6
 
 ```
 ~/
+├── bin/
+│   └── lyrics              # Main executable
 ├── Music/                  # Downloaded music files
 │   └── *.mp3
-├── .lyrics_cache/         # Cached lyrics
+├── .lyrics_cache/          # Cached lyrics
 │   └── *.lrc
 └── .config/
     └── lyrics-shower/
-        └── config.json    # Configuration file
+        └── config.json     # Configuration file
 ```
 
 ## 🔧 Configuration
@@ -152,7 +226,8 @@ Config file: `~/.config/lyrics-shower/config.json`
     "bass_threshold": 0.7,
     "high_threshold": 0.8
   },
-  "auto_install": true
+  "auto_install": true,
+  "check_updates": true
 }
 ```
 
@@ -160,6 +235,7 @@ Config file: `~/.config/lyrics-shower/config.json`
 
 | Command | Aliases | Description |
 |---------|---------|-------------|
+| `lyrics` | - | Interactive mode |
 | `lyrics <query>` | - | Download & play with lyrics |
 | `-l, --lyrics` | - | Fetch lyrics only |
 | `-s, --showcase` | - | Display lyrics (use with -l) |
@@ -173,11 +249,17 @@ Config file: `~/.config/lyrics-shower/config.json`
 | `-ext, --external-url` | - | Custom URL |
 | `--music-url` | - | Custom music URL |
 | `--lyrics-url` | - | Custom lyrics URL |
+| `--update` | - | Update to latest version |
+| `--uninstall` | - | Uninstall lyrics shower |
+| `-v, --version` | - | Show version info |
 | `-h, --help` | - | Show help |
 
 ## 🎯 Examples
 
 ```bash
+# Enter interactive mode
+lyrics
+
 # Search and play
 lyrics overnight - mirrors demo
 
@@ -203,6 +285,10 @@ lyrics --settings
 # Change to centered mode
 # Enable glitch effects
 # Switch to mpv player
+
+# Keep up to date
+lyrics --version              # Check current version
+lyrics --update               # Update to latest
 ```
 
 ## 🐛 Troubleshooting
@@ -237,9 +323,21 @@ pkg install mpv
 lyrics --settings  # Change to mpv
 ```
 
+**Update issues:**
+```bash
+# Manually update
+cd ~/termux-lyrics-shower
+git pull
+bash install.sh
+```
+
+**Version warnings won't go away:**
+- Make sure you're updated: `lyrics --update`
+- Disable version checking: `lyrics --settings` → Option 8
+
 ## 📜 License
 
-MIT License - See script header for full license text
+MIT License - See main.py header for full license text
 
 ## 🙏 Credits
 
@@ -249,12 +347,47 @@ MIT License - See script header for full license text
 
 ## 🌟 Tips
 
-1. **Cache songs ahead of time** with `-m` for offline listening
-2. **Use fuzzy search** when clearing - type partial names
-3. **Customize display mode** to match your terminal size
-4. **Try effects** for a unique visual experience
-5. **Check settings menu** for all customization options
+1. **Use interactive mode** for easier navigation - just type `lyrics`
+2. **Cache songs ahead of time** with `-m` for offline listening
+3. **Use fuzzy search** when clearing - type partial names
+4. **Customize display mode** to match your terminal size
+5. **Try effects** for a unique visual experience
+6. **Keep updated** - run `lyrics --update` regularly
+7. **Check settings menu** for all customization options
+
+## 🔄 Updating
+
+The app checks for updates automatically. When a new version is available, you'll see a warning. Update with:
+
+```bash
+lyrics --update
+```
+
+This will:
+- Backup your current version
+- Download the latest version from GitHub
+- Install it automatically
+- Keep all your settings and cached data
+
+## 🗑️ Uninstalling
+
+To uninstall (keeps your music and lyrics):
+
+```bash
+lyrics --uninstall
+```
+
+To completely remove everything:
+
+```bash
+lyrics --uninstall
+rm -rf ~/Music
+rm -rf ~/.lyrics_cache
+rm -rf ~/.config/lyrics-shower
+```
 
 ---
 
 Made with ❤️ for Termux users who love music and lyrics!
+
+**Repository:** [github.com/sparxmathsalternative/termux-lyrics-shower](https://github.com/sparxmathsalternative/termux-lyrics-shower)
