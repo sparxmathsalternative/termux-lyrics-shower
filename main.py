@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/python3
 """
 Termux Lyrics Shower - Real-time synced lyrics display with music playback
-Version: 1.0.0-alpha
+Version 1.0.1-alpha
 License: MIT License
 
 Copyright (c) 2026
@@ -40,12 +40,12 @@ from datetime import datetime
 
 # VERSION INFORMATION
 CURRENT_VERSION = {
-    "version": "1.0.0-alpha",
+    "version": "1.0.1",
     "major": 1,
     "minor": 0,
-    "patch": 0,
-    "status": "alpha",
-    "build": 1,
+    "patch": 1,
+    "status": "stable",
+    "build": 2,
     "last_updated": "2026-01-30"
 }
 
