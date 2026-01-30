@@ -60,6 +60,23 @@ pkg update -y
 pkg install python ffmpeg curl -y
 pip install yt-dlp requests
 
+# Clean up - delete the entire repo folder
+echo ""
+echo "🧹 Cleaning up installation files..."
+
+# Get the directory where the script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
+
+# Navigate out of the repo folder
+cd ~
+
+# Delete the entire repo folder
+if [ -d "$SCRIPT_DIR" ]; then
+    rm -rf "$SCRIPT_DIR"
+    echo "  ✓ Removed installation folder"
+fi
+
 echo ""
 echo "✅ Installation complete!"
 echo ""
