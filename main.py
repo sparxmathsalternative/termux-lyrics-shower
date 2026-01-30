@@ -327,25 +327,58 @@ def download_music(query: str, custom_url: str = None) -> Optional[str]:
     else:
         config = load_config()
         platform = config["platform"]
-        url = f"ytsearch1:{query}" if platform == "youtube" else query
+        
+        # Map platform to search format
+        if platform == "youtube":
+            url = f"ytsearch1:{query}"
+        elif platform == "soundcloud":
+            url = f"scsearch1:{query}"
+        elif platform == "spotify":
+            url = f"spsearch1:{query}"
+        else:
+            url = f"ytsearch1:{query}"  # Default to YouTube
     
-    cmd = [
+    # Base command
+    base_cmd = [
         "yt-dlp",
         "-x",
         "--audio-format", "mp3",
         "--audio-quality", "0",
         "-o", output_template,
-        url,
+        "--extractor-args", "youtube:player_client=web_creator,android_creator",
         "--print", "after_move:filepath"
     ]
     
+    # Try with cookies from common browsers
+    browsers = ["firefox", "chrome", "chromium"]
+    
+    for browser in browsers:
+        try:
+            cmd = base_cmd.copy()
+            cmd.insert(-1, "--cookies-from-browser")
+            cmd.insert(-1, browser)
+            cmd.append(url)
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            filepath = result.stdout.strip().split('\n')[-1]
+            print(f"✅ Downloaded: {filepath}")
+            return filepath
+        except:
+            continue
+    
+    # If cookies don't work, try without
     try:
+        cmd = base_cmd + [url]
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         filepath = result.stdout.strip().split('\n')[-1]
         print(f"✅ Downloaded: {filepath}")
         return filepath
     except subprocess.CalledProcessError as e:
         print(f"❌ Failed to download: {e}")
+        print("\n💡 YouTube requires authentication. Try:")
+        print("   1. Install a browser: pkg install firefox")
+        print("   2. Login to YouTube in the browser")
+        print("   3. Try again - cookies will be used automatically")
         return None
 
 # ============= DISPLAY FUNCTIONS =============
